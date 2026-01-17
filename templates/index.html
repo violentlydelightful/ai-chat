@@ -11,20 +11,45 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <span class="logo">🤖</span>
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 8V4H8"/>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                        <rect x="4" y="8" width="16" height="12" rx="2"/>
+                        <path d="M9 13h.01"/>
+                        <path d="M15 13h.01"/>
+                        <path d="M9 17h6"/>
+                    </svg>
+                </div>
                 <h1>AI Chat</h1>
             </div>
 
             <button class="btn-new-chat" onclick="newChat()">
-                <span>+</span> New Chat
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                New Chat
             </button>
 
             <div class="sidebar-footer">
                 {% if demo_mode %}
-                <div class="mode-badge demo">Demo Mode</div>
+                <div class="mode-badge demo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                    Demo Mode
+                </div>
                 <p class="mode-note">Add OPENAI_API_KEY for full AI</p>
                 {% else %}
-                <div class="mode-badge live">AI Connected</div>
+                <div class="mode-badge live">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    AI Connected
+                </div>
                 {% endif %}
             </div>
         </aside>
@@ -34,7 +59,16 @@
             <!-- Messages -->
             <div class="messages-container" id="messages">
                 <div class="welcome-message">
-                    <div class="welcome-icon">🤖</div>
+                    <div class="welcome-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 8V4H8"/>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                            <rect x="4" y="8" width="16" height="12" rx="2"/>
+                            <path d="M9 13h.01"/>
+                            <path d="M15 13h.01"/>
+                            <path d="M9 17h6"/>
+                        </svg>
+                    </div>
                     <h2>How can I help you today?</h2>
                     <p>Start a conversation by typing a message below.</p>
 
@@ -57,11 +91,21 @@
                             onkeydown="handleKeyDown(event)"
                         ></textarea>
                         <button type="submit" class="btn-send" id="send-btn">
-                            <span class="send-icon">➤</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
                         </button>
                     </div>
                 </form>
-                <p class="disclaimer">AI can make mistakes. Consider checking important information.</p>
+                <p class="disclaimer">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="16" x2="12" y2="12"/>
+                        <line x1="12" y1="8" x2="12.01" y2="8"/>
+                    </svg>
+                    AI can make mistakes. Consider checking important information.
+                </p>
             </div>
         </main>
     </div>
@@ -71,6 +115,44 @@
         const messageInput = document.getElementById('message-input');
         const sendBtn = document.getElementById('send-btn');
         let isWaiting = false;
+
+        // SVG icons as strings
+        const userIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+        </svg>`;
+
+        const botIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 8V4H8"/>
+            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+            <rect x="4" y="8" width="16" height="12" rx="2"/>
+            <path d="M9 13h.01"/>
+            <path d="M15 13h.01"/>
+            <path d="M9 17h6"/>
+        </svg>`;
+
+        const welcomeHTML = `
+            <div class="welcome-message">
+                <div class="welcome-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 8V4H8"/>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                        <rect x="4" y="8" width="16" height="12" rx="2"/>
+                        <path d="M9 13h.01"/>
+                        <path d="M15 13h.01"/>
+                        <path d="M9 17h6"/>
+                    </svg>
+                </div>
+                <h2>How can I help you today?</h2>
+                <p>Start a conversation by typing a message below.</p>
+
+                <div class="suggestions">
+                    <button class="suggestion" onclick="sendSuggestion(this)">What can you help me with?</button>
+                    <button class="suggestion" onclick="sendSuggestion(this)">Tell me something interesting</button>
+                    <button class="suggestion" onclick="sendSuggestion(this)">Help me brainstorm ideas</button>
+                </div>
+            </div>
+        `;
 
         // Auto-resize textarea
         messageInput.addEventListener('input', () => {
@@ -139,7 +221,7 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${role}`;
 
-            const avatar = role === 'user' ? '👤' : '🤖';
+            const avatar = role === 'user' ? userIcon : botIcon;
 
             // Format content with line breaks and basic markdown
             const formattedContent = formatMessage(content);
@@ -175,7 +257,7 @@
             div.id = id;
             div.className = 'message assistant typing';
             div.innerHTML = `
-                <div class="message-avatar">🤖</div>
+                <div class="message-avatar">${botIcon}</div>
                 <div class="message-content">
                     <div class="typing-indicator">
                         <span></span><span></span><span></span>
@@ -194,19 +276,7 @@
 
         function newChat() {
             // Clear messages
-            messagesContainer.innerHTML = `
-                <div class="welcome-message">
-                    <div class="welcome-icon">🤖</div>
-                    <h2>How can I help you today?</h2>
-                    <p>Start a conversation by typing a message below.</p>
-
-                    <div class="suggestions">
-                        <button class="suggestion" onclick="sendSuggestion(this)">What can you help me with?</button>
-                        <button class="suggestion" onclick="sendSuggestion(this)">Tell me something interesting</button>
-                        <button class="suggestion" onclick="sendSuggestion(this)">Help me brainstorm ideas</button>
-                    </div>
-                </div>
-            `;
+            messagesContainer.innerHTML = welcomeHTML;
 
             // Clear server-side conversation
             fetch('/api/clear', {
